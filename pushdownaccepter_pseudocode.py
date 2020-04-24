@@ -1,3 +1,4 @@
+result = [["symbol", "<"], ["tag", "gem"], ["symbol", ">"]]
 input_stack = result #from xmlparser [0] = type, [1] = token #[][]
 write_stack = []
 write_stack.push("start") #mark start of document
@@ -5,7 +6,7 @@ write_stack.push("start") #mark start of document
 #------------- main -------------------
 while len(input_stack)!=0: #while input stack not empty
     if input_stack.pop(0)[1] == '<': #first char must be '<'
-        if tagLeft() == False: 
+        if tagLeft() is False: 
             print("NO")
             break
     else:  #first char is not '<'
