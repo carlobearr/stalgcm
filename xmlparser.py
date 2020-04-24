@@ -1,5 +1,3 @@
-from statemachine import StateMachine
-
 source = open('test.xml', 'r')
 text = []
 tokens = []
