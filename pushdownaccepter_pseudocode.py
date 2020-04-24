@@ -1,11 +1,11 @@
-input_stack = result[][] #from xmlparser [0] = type, [1] = token
+input_stack = result #from xmlparser [0] = type, [1] = token #[][]
 write_stack = []
 write_stack.push("start") #mark start of document
 
 #------------- main -------------------
 while len(input_stack)!=0: #while input stack not empty
     if input_stack.pop(0)[1] == '<': #first char must be '<'
-        if tagLeft() == false: 
+        if tagLeft() == False: 
             print("NO")
             break
     else:  #first char is not '<'
@@ -38,52 +38,52 @@ def tagLeft(): #symbol '<' detected
             next = input_stack.pop(0)
             if next[1] == ">":
                 write_stack.pop() #terminate nest
-                return true
+                return True
             else:
-                return false
+                return False
 
     elif next[1] == "/": #if next is slash
         return closeNest()
 
     else:
-        return false
+        return False
         
 
 def attribute(): #attribute detected must be followed by ="value"
     if input_stack.pop(0)[1] != "=":
-        return false
+        return False
     if input_stack.pop(0)[0] != "attribute value":
-        return false
+        return False
 
     next = input_stack.pop(0)
 
     if next[1] == " ": #space
         next = input_stack.pop(0)
-        if next[0] == "attribute"
+        if next[0] == "attribute":
             return attribute()
-        else
-            return false
+        else:
+            return False
 
     elif next[1] == ">": #new nest
-
+        return
     elif next[1] == "/": #self closing
         next = input_stack.pop(0)
-        if next[1] == ">"
+        if next[1] == ">":
             write_stack.pop() #terminate nest
             return closeTag()
-        else
-            return false
-    else  
-        return false
+        else:
+            return False
+    else  :
+        return False
 
 
-
+'''
 #wala pa tong mga to
 def yungMayQuestionMark()
 
 def nest(): #>
 
-def closeTag(): # /
+def closeTag(): # /'''
 
 
 
