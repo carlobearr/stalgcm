@@ -1,6 +1,7 @@
 result = [["symbol", "<"], ["tag", "gem"], ["symbol", ">"]]
 input_stack = result #from xmlparser [0] = type, [1] = token #[][]
 write_stack = []
+
 write_stack.push("start") #mark start of document
 
 #------------- main -------------------
