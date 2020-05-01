@@ -1,3 +1,14 @@
+'''
+SUBMITTED BY:
+MARK CAI
+CARLO SANTOS
+BRIAN SO
+
+SUBMITTED TO:
+MR. ARVIN REYES
+
+STALGCM S15
+'''
 from sys import stdin
 
 def error():
@@ -24,25 +35,29 @@ status = 0
 token = 0
 temp = ""
 
+'''
 
+LEXICAL ANALYZER PART:
+Scans each character in the given xml, which was dissected into one long string, and giving them their 
+appropriate token types.
+
+'''
 for i in range(len(xml)):
     if status == 0:
         if xml[i] == "<":
             result.append(["Symbol", "<"])
             token = token + 1
             status = 1
-
     elif status == 1:
-        if (xml[i] == "?" or xml[i] == "/"):
+        if (xml[i].isalpha()):
+            temp = temp + xml[i]
+            status = 3
+        elif (xml[i] == "?" or xml[i] == "/"):
             temp = temp + xml[i]
             result.append(["Symbol", temp])
             token = token + 1
             temp = ""
             status = 2
-        elif (xml[i].isalpha()):
-            temp = temp + xml[i]
-            status = 3
-
     elif status == 2:
         if (xml[i].isalpha()):
             temp = temp + xml[i]
@@ -51,9 +66,15 @@ for i in range(len(xml)):
             result.append(["Symbol", xml[i]])
             token = token + 1
             status = 9
-    
     elif status == 3:
-        if (xml[i].isalpha() or xml[i].isdigit() or xml[i] == "_"):
+        if (xml[i] == ">"):
+            result.append(["Tag", temp])
+            temp = ""
+            token = token + 1
+            result.append(["Symbol", ">"])
+            token = token + 1
+            status = 9
+        elif (xml[i].isalpha() or xml[i].isdigit() or xml[i] == "_"):
             temp = temp + xml[i]
         elif (xml[i] == ':' or xml[i] == '-' or xml[i] == '.'):
             error()
@@ -62,15 +83,6 @@ for i in range(len(xml)):
             temp = ""
             token = token + 1
             status = 4
-        elif (xml[i] == ">"):
-            result.append(["Tag", temp])
-            temp = ""
-            token = token + 1
-            
-            result.append(["Symbol", ">"])
-            token = token + 1
-            status = 9
-
     elif status == 4:
         if (xml[i].isalpha()):
             temp = temp + xml[i]
@@ -81,18 +93,16 @@ for i in range(len(xml)):
             temp = ""
             token = token + 1
             status = 2
-
     elif status == 5:
-        if (xml[i].isalpha() or xml[i].isdigit() or xml[i] == "_"):
-            temp = temp + xml[i]
-        elif (xml[i] == "="):
+        if (xml[i] == "="):
             result.append(["Attribute", temp])
             token = token + 1
             temp = ""
             status = 6
-
             result.append(["Operator", xml[i]])
             token = token + 1
+        elif (xml[i].isalpha() or xml[i].isdigit() or xml[i] == "_"):
+            temp = temp + xml[i]       
     elif status == 6:
         if (xml[i] == '\"'):
             temp = temp + xml[i]
@@ -107,21 +117,21 @@ for i in range(len(xml)):
             token = token + 1
             status = 8
     elif status == 8:
-        if (xml[i] == ">"):
+        if (xml[i] == "?"):
+            result.append(["Symbol", xml[i]])
+        elif (xml[i] == ">"):
             result.append(["Symbol", xml[i]])
             token = token + 1
             status = 9
         elif (xml[i] == " "):
             status = 4
-        elif (xml[i] == "?"):
-            result.append(["Symbol", xml[i]])
     elif status == 9:
-        if (xml[i] == "<"):
+        if (xml[i] == " " or xml[i] == "\n"):
+            status = 0
+        elif (xml[i] == "<"):
             result.append(["Symbol", "<"])
             token = token + 1
             status = 1
-        elif (xml[i] == " " or xml[i] == "\n"):
-            status = 0
         else:
             status = 10
             temp = temp + xml[i]
@@ -145,8 +155,18 @@ count = 0
 store = []
 store.append("#")
 '''print("==================")'''
+
+'''
+
+SYNTAX ANALYZER PART:
+Scans the result list, which contains a 2D list of the token and its corresponding type inside, until 
+count is equal to the number of tokens in the list and identifies if the token is in the right position. 
+If it is correct, "YES" will be printed out, and if there is an error then "NO" will 
+be printed out by calling the error() function.
+
+'''
+
 while (token != count):
-    #print(store)
     if status == 0:
         if (result[count][1] == "<"):
             status = 1
@@ -193,22 +213,22 @@ while (token != count):
         else:
             error()
     elif status == 7:
-        if (result[count][1] == "<"):
-            status = 8
-            count = count + 1
-        elif (result[count][0] == "Value"):
+        if (result[count][0] == "Value"):
             status = 12
+            count = count + 1
+        elif (result[count][1] == "<"):
+            status = 8
             count = count + 1
         else:
             error()
     elif status == 8:
-        if (result[count][0] == "Tag"):
+        if (result[count][1] == "/"):
+            status = 10
+            count = count + 1
+        elif (result[count][0] == "Tag"):
             status = 9
             count = count + 1
             store.append(result[count-1][1])
-        elif (result[count][1] == "/"):
-            status = 10
-            count = count + 1
         else:
             error()
     elif status == 9:
@@ -254,11 +274,11 @@ while (token != count):
         if (result[count][1] == "/"):
             status = 11
             count = count + 1
-        elif (result[count][0] == "Attribute"):
-            status = 13
-            count = count + 1
         elif (result[count][1] == ">"):
             status = 7
+            count = count + 1
+        elif (result[count][0] == "Attribute"):
+            status = 13
             count = count + 1
         else:
             error()
