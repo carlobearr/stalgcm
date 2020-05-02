@@ -126,7 +126,7 @@ for i in range(len(xml)):
         elif (xml[i] == " "):
             state = 4
     elif state == 9:
-        if (xml[i] == " " or xml[i] == "\n"):
+        if (xml[i] == "\n" or xml[i] == " "):
             state = 0
         elif (xml[i] == "<"):
             result.append(["Symbol", "<"])
@@ -241,7 +241,7 @@ while (token != count):
         else:
             error()
     elif state == 10:
-        if (result[count][0] == "Tag" and (store[len(store)-1] == result[count][1])):
+        if ((store[len(store)-1] == result[count][1]) and result[count][0] == "Tag"):
             state = 11
             store.pop()
             count = count +1
